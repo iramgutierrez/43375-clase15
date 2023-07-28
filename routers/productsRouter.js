@@ -10,20 +10,41 @@ productsRouter.get('/', async(req, res) => {
 })
 
 productsRouter.get('/:pid',async (req, res) => {
-    const {pid} = req.params
+    const pid = req.params.pid
     const product=await productManager.getProductById(pid)
     return res.json(product)
 })
 
-productsRouter.post('/', (req, res) => {
+productsRouter.post('/', async (req, res) => {
+    const body = req.body
+
+    const product = await productManager.addProduct(body)
+
+    return res.status(201).json(product)
 
 })
 
-productsRouter.put('/:pid', (req, res) => {
+productsRouter.put('/:pid', async (req, res) => {
+    const pid = req.params.pid
+    const body = req.body
+    const product = await productManager.updateProduct(pid, body)
 
+    return res.json(product)
 })
 
-productsRouter.delete('/:pid', (req, res) => {
+productsRouter.delete('/:pid', async (req, res) => {
+    const pid = req.params.pid
+
+    try {
+        const product = await productManager.deleteProduct(pid)
+    
+        return res.json(product)
+
+    } catch (e) {
+        return res.status(404).json({
+            message: e.message
+        })
+    }
 
 })
 
