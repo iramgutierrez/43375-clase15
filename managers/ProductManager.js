@@ -6,7 +6,9 @@ class ProductManager {
     }
 
     async getAllProducts() {
-        return this.model.find()
+        const products = await this.model.find()
+
+        return products.map(p => p.toObject())
     }
 
     async getProductById(id) {
