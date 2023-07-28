@@ -1,15 +1,17 @@
+const productModel = require('../models/productModels')
+const { param } = require('../routers/productsRouter')
+
 class ProductManager {
     constructor() {
-        this.products = [];
+        this.model = productModel
     }
-
 
     async getAllProducts() {
-
+        return this.model.find()
     }
 
-    async getProductById() {
-
+    async getProductById(id) {
+        return this.model.findById(id)
     }
 
     async addProduct() {

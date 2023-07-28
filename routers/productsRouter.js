@@ -1,12 +1,18 @@
 const {Router} = require('express')
+const ProductManager = require('../managers/ProductManager')
 const productsRouter = Router()
+const productManager = new ProductManager()
 
-productsRouter.get('/', (req, res) => {
-    res.json([]);
+
+productsRouter.get('/', async(req, res) => {
+    const products = await productManager.getAllProducts()
+    res.json(products);
 })
 
-productsRouter.get('/:pid', (req, res) => {
-
+productsRouter.get('/:pid',async (req, res) => {
+    const {pid} = req.params
+    const product=await productManager.getProductById(pid)
+    return res.json(product)
 })
 
 productsRouter.post('/', (req, res) => {
