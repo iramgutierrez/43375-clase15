@@ -8,7 +8,17 @@ class ProductManager {
     async getAllProducts() {
         const products = await this.model.find()
 
-        return products.map(p => p.toObject())
+        return this.mapProducts(products)
+    }
+
+    mapProducts (products) {
+        return products.map(p => {
+            const productObj = p.toObject()
+            productObj.id = productObj._id
+            delete productObj._id
+
+            return productObj
+        })
     }
 
     async getProductById(id) {
