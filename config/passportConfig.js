@@ -1,12 +1,30 @@
 const passport = require('passport');
 const local = require('passport-local');
+const passportJWT = require('passport-jwt')
 const userModel = require('../models/userModel');
 const { createHash, isValidPassword } = require('../utils/utils');
 const cartModel = require('../models/cartModel');
 
 const LocalStrategy = local.Strategy;
 
+
+const JWTStrategy = passportJWT.Strategy
+const extractJWT = passportJWT.ExtractJwt
+
+const cookieExtractor = (req) => {
+  console.log(req.cookies)
+  return req.cookies && req.cookies.authToken
+  // return req.headers && req.headers['authorization'] && req.headers['authorization'].replace('Bearer ', '')
+}
+
 const initializePassport = () => {
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest: extractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: 'jwtsecret'
+      }, (jwtPayload, done) => {
+        console.log({ jwtPayload })
+        done(null, jwtPayload.user)
+      }))
 
     passport.use('register', new LocalStrategy(
         { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
@@ -39,9 +57,6 @@ const initializePassport = () => {
 
             }
 
-
-
-
         }
     ));
 
@@ -50,7 +65,7 @@ const initializePassport = () => {
 
             try {
 
-                const existe = await userModel.findOne({ email: username });
+                const existe = await userModel.findOne({ email: username }).populate('cart');
                 console.log(existe.cart)
                 if (!existe) {
                     console.log('no existe');

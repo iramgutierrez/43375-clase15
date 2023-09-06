@@ -7,12 +7,15 @@ const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const sessionRouter = require('./routers/sessionRouter');
 const session = require('express-session');
+const cookieParser = require('cookie-parser')
 
 const mongoose = require('mongoose')
 const handlebars = require('express-handlebars')
 
 
 const app = express();
+
+app.use(cookieParser('secretCookie'))
 
 // Configuración handlebars
 app.engine('handlebars', handlebars.engine())

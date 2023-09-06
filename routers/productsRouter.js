@@ -6,6 +6,7 @@ const productManager = new ProductManager()
 
 productsRouter.get('/', async(req, res) => {
     const products = await productManager.getAllProducts()
+    
     res.json(products);
 })
 
@@ -31,6 +32,7 @@ productsRouter.put('/:pid', async (req, res) => {
 
     return res.json(product)
 })
+
 
 productsRouter.delete('/:pid', async (req, res) => {
     const pid = req.params.pid
