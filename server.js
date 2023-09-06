@@ -1,6 +1,12 @@
 const express = require('express');
 const productsRouter = require('./routers/productsRouter')
 const viewsRouter = require('./routers/viewsRouter')
+const passport = require('passport');
+const initializePassport = require('./config/passportConfig');
+const MongoStore = require('connect-mongo');
+const flash = require('connect-flash');
+const sessionRouter = require('./routers/sessionRouter');
+const session = require('express-session');
 
 const mongoose = require('mongoose')
 const handlebars = require('express-handlebars')
@@ -23,11 +29,26 @@ mongoose.connect(MONGODB_CONNECT)
 
 
 app.use(express.json());
+app.use(flash());
 app.use(express.urlencoded({extended:true}));
 app.use(express.static('public'));
+app.use(session({
+    store: MongoStore.create({
+      mongoUrl: MONGODB_CONNECT,
+      ttl: 15
+    }),
+    secret: 'secretSession',
+    resave: true,
+    saveUninitialized: true
+  }))
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api/products', productsRouter)
-app.use('/products', viewsRouter)
+app.use('/', viewsRouter)
+app.use('/api/sessions', sessionRouter);
 
 
 

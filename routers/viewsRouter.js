@@ -10,4 +10,12 @@ productsViewsRouter.get('/', async(req, res) => {
     return res.render('products/products', { products })
 })
 
+productsViewsRouter.get('/register', (req, res) => {
+    res.render('registro');
+});
+
+productsViewsRouter.get('/login', (req, res) => {
+    res.render('login');
+});
+
 module.exports = productsViewsRouter
