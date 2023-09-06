@@ -7,6 +7,10 @@ const userShema = new mongoose.Schema({
     unique:true,
     
   },
-  password:String
+  password:String,
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'carts'
+  }
 })
 module.exports  = mongoose.model('users',userShema)

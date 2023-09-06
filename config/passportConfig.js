@@ -2,6 +2,7 @@ const passport = require('passport');
 const local = require('passport-local');
 const userModel = require('../models/userModel');
 const { createHash, isValidPassword } = require('../utils/utils');
+const cartModel = require('../models/cartModel');
 
 const LocalStrategy = local.Strategy;
 
@@ -50,7 +51,7 @@ const initializePassport = () => {
             try {
 
                 const existe = await userModel.findOne({ email: username });
-
+                console.log(existe.cart)
                 if (!existe) {
                     console.log('no existe');
                     return done(null, false, {
@@ -63,14 +64,19 @@ const initializePassport = () => {
                         message: 'credenciales incorrectas'
                     });
                 }
+                
+                if (!existe.cart) {
+                    const newCart = await cartModel.create({
+                        name: 'default'
+                    })
 
+                    await userModel.updateOne({ _id: existe._id}, {cart: newCart._id })
+                }
                 return done(null, existe);
 
             } catch (error) {
 
             }
-
-
 
         }
     ))
@@ -81,13 +87,10 @@ const initializePassport = () => {
     });
 
     passport.deserializeUser(async (id, done) => {
-        const user = await userModel.findById(id);
+        const user = await userModel.findById(id).populate('cart');
 
         return done(null, user);
     });
-
-
-
 }
 
 

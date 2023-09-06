@@ -4,7 +4,14 @@ const productsViewsRouter = Router()
 const productManager = new ProductManager()
 
 
-productsViewsRouter.get('/', async(req, res) => {
+productsViewsRouter.get('/products', (req, res, next) => {
+    if (!req.user) {
+        return res.redirect('login')
+    }
+
+    return next()
+}, async(req, res) => {
+    console.log(req.user, req.session)
     const products = await productManager.getAllProducts()
     console.log({ products })
     return res.render('products/products', { products })
