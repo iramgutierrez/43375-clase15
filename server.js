@@ -1,5 +1,5 @@
 const express = require('express');
-const productsRouter = require('./routers/productsRouter')
+const productRouterFn = require('./routers/productsRouter')
 const viewsRouter = require('./routers/viewsRouter')
 const passport = require('passport');
 const initializePassport = require('./config/passportConfig');
@@ -8,10 +8,21 @@ const flash = require('connect-flash');
 const sessionRouter = require('./routers/sessionRouter');
 const session = require('express-session');
 const cookieParser = require('cookie-parser')
+const dotenv = require('dotenv')
+const path = require('path')
 
 const mongoose = require('mongoose')
 const handlebars = require('express-handlebars')
 
+console.log(process.env.NODE_ENV)
+
+const file_path = `./.${process.env.NODE_ENV}.env`
+
+console.log({ file_path })
+
+dotenv.config({
+  path: file_path
+})
 
 const app = express();
 
@@ -48,6 +59,8 @@ app.use(session({
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+const productsRouter = productRouterFn()
 
 app.use('/api/products', productsRouter)
 app.use('/', viewsRouter)

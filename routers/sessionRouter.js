@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = new Router();
 const passport = require('passport');
 const { generateToken } = require('../utils/jwt');
+const { passportCall } = require('../config/passportCall')
 
 router.post('/register', passport.authenticate('register', { failureRedirect: '/register' }), async (req, res) => {
     
@@ -25,7 +26,7 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/login'
     }).redirect('/api/sessions/current');
 });
 
-const passportCall = (strategy) => {
+/*const passportCall = (strategy) => {
     return (req, res, next) => {
       passport.authenticate(strategy, (err, user, info) => {
         if (err) {
@@ -43,7 +44,7 @@ const passportCall = (strategy) => {
         return next()
       })(req, res, next)
     }
-  }
+  }*/
 
 router.get('/current', passportCall('jwt'), (req, res) => {
     return res.json({

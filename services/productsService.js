@@ -1,36 +1,34 @@
+const ProductsDAOMongo = require('../DAOs/productsDAOMongo')
 const productModel = require('../models/productModels')
+const ProductsRepository = require('../repositories/productsRepository')
+const { sendMail } = require('../utils/mailing')
 
-class ProductManager {
+class ProductService {
     constructor() {
-        this.model = productModel
+      this.repository = new ProductsRepository()
+      // this.repository = productModel
     }
 
     async getAllProducts() {
-        const products = await this.model.find()
+        const products = await this.repository.getAll()
 
-        return this.mapProducts(products)
-    }
-
-    mapProducts (products) {
-        return products.map(p => {
-            const productObj = p.toObject()
-            productObj.id = productObj._id
-            delete productObj._id
-
-            return productObj
-        })
+        return products
     }
 
     async getProductById(id) {
-        return this.model.findById(id)
+        return this.repository.findById(id)
     }
 
     async addProduct(body) {
-        return this.model.create({
+        return this.repository.create({
             code: body.code,
             stock: body.stock,
             title: body.title,
             price: body.price
+        }).then(product => {
+          console.log({ product })
+          sendMail('Nuevo producto agregado', JSON.stringify(product))
+          return product
         })
     }
 
@@ -49,23 +47,23 @@ class ProductManager {
             price: body.price || product.email
         }
 
-        await this.model.updateOne({ _id: id }, productUpdated)
+        await this.repository.updateOne({ _id: id }, productUpdated)
 
         return productUpdated
     }
 
     async deleteProduct(id) {
-        const product = await this.model.findById(id)
+        const product = await this.repository.findById(id)
 
         if (!product) {
             throw new Error('Producto no existe')
         }
 
-        await this.model.deleteOne({ _id: id })
+        await this.repository.deleteOne({ _id: id })
 
         return true
     }
 
 }
 
-module.exports = ProductManager
+module.exports = ProductService

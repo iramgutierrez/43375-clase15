@@ -34,7 +34,8 @@ const deleteProduct = id => {
   fetch(`/api/products/${id}`, {
     method: 'DELETE',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'authorization': `Bearer ${localStorage.getItem('token')}`
     }
   })
   .then(response => response.json())

@@ -12,7 +12,7 @@ const JWTStrategy = passportJWT.Strategy
 const extractJWT = passportJWT.ExtractJwt
 
 const cookieExtractor = (req) => {
-  console.log(req.cookies)
+  console.log({ cookies: req.cookies })
   return req.cookies && req.cookies.authToken
   // return req.headers && req.headers['authorization'] && req.headers['authorization'].replace('Bearer ', '')
 }
