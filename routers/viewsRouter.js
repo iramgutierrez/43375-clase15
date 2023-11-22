@@ -6,7 +6,7 @@ const productsViewsRouter = Router()
 const productService = new ProductService()
 
 
-productsViewsRouter.get('/products', passportCall('jwt', true), authorizationMiddleware(), (req, res, next) => {
+productsViewsRouter.get('/products', passportCall('jwt', true), (req, res, next) => {
     if (!req.user) {
         return res.redirect('login')
     }
